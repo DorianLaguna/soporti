@@ -105,18 +105,22 @@ alter table public.ticket_attachments enable row level security;
 
 -- profiles: lectura abierta a cualquier autenticado (se necesita para mostrar
 -- nombres de técnicos en reasignación y carga de trabajo del dashboard).
--- Sin política de INSERT/DELETE: las cuentas se provisionan manualmente
+-- Sin política de INSERT/UPDATE/DELETE: las cuentas se provisionan manualmente
 -- (ver supabase/README.md), no hay registro público.
+--
+-- IMPORTANTE (hallazgo de pruebas de seguridad dinámicas): en un intento
+-- anterior se agregó una política de UPDATE "solo tu propia fila"
+-- (using/with check: id = auth.uid()). Postgres RLS es a nivel de FILA, no
+-- de columna, así que esa política permitía a cualquier usuario autenticado
+-- cambiar su propio campo `role` a 'supervisor' o 'tecnico' mediante una
+-- llamada directa a la REST API (sin pasar por la app), logrando escalación
+-- de privilegios. Verificado con una prueba dinámica real (ver informe).
+-- La app no tiene ninguna pantalla de "editar mi perfil", así que no hace
+-- falta política de UPDATE en absoluto: se elimina por completo.
 create policy "profiles_select_authenticated"
   on public.profiles for select
   to authenticated
   using (true);
-
-create policy "profiles_update_own"
-  on public.profiles for update
-  to authenticated
-  using (id = auth.uid())
-  with check (id = auth.uid());
 
 -- tickets
 create policy "tickets_select"

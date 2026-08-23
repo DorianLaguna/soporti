@@ -131,6 +131,9 @@ class TicketListScreen extends ConsumerWidget {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: AppColors.primary,
+        unselectedItemColor: AppColors.textSecondary,
         onTap: (index) {
           switch (index) {
             case 0:
@@ -194,9 +197,9 @@ class _FilterChipsRow extends StatelessWidget {
               onSelected: (_) {
                 ref.read(ticketFilterProvider.notifier).state = filter;
               },
-              selectedColor: AppColors.uvmGreen.withValues(alpha: 0.15),
+              selectedColor: AppColors.primary.withValues(alpha: 0.15),
               labelStyle: TextStyle(
-                color: isSelected ? AppColors.uvmGreen : AppColors.textPrimary,
+                color: isSelected ? AppColors.primary : AppColors.textPrimary,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
               ),
             ),

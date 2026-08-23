@@ -103,7 +103,7 @@ class WorkloadChart extends StatelessWidget {
                       barRods: [
                         BarChartRodData(
                           toY: entry.value.value.toDouble(),
-                          color: AppColors.uvmGreen,
+                          color: AppColors.primary,
                           width: 28,
                           borderRadius: const BorderRadius.vertical(
                             top: Radius.circular(4),

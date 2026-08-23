@@ -6,6 +6,7 @@ import '../../../core/constants/app_strings.dart';
 import '../../../core/widgets/priority_chip.dart';
 import '../../../models/ticket.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../tickets/providers/ticket_provider.dart';
 import '../providers/tech_provider.dart';
 import '../repositories/tech_repository.dart';
 
@@ -24,7 +25,7 @@ class AvailableTicketsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(AppStrings.availableTickets),
-        backgroundColor: AppColors.uvmGreen,
+        backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
       ),
       body: ticketsAsync.when(
@@ -150,7 +151,7 @@ class _AvailableTicketCard extends ConsumerWidget {
                               color: AppColors.textPrimary,
                             ),
                           ),
-                          backgroundColor: AppColors.background,
+                          backgroundColor: AppColors.surface,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 4,
                             vertical: 0,
@@ -173,7 +174,7 @@ class _AvailableTicketCard extends ConsumerWidget {
                         icon: const Icon(Icons.person_add, size: 18),
                         label: const Text(AppStrings.assignToMe),
                         style: FilledButton.styleFrom(
-                          backgroundColor: AppColors.uvmGreen,
+                          backgroundColor: AppColors.primary,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 16,
                             vertical: 8,
@@ -201,14 +202,18 @@ class _AvailableTicketCard extends ConsumerWidget {
       final repository = ref.read(techRepositoryProvider);
       await repository.assignToSelf(ticket.id, user.id);
 
-      // Refrescar la lista de tickets disponibles
+      // Refrescar la lista de tickets disponibles y la cola del técnico
+      // (el ticket recién asignado debe aparecer ahí de inmediato), y la
+      // lista del solicitante (ya no está "Abierto" sino "Asignado").
       ref.invalidate(availableTicketsProvider);
+      ref.invalidate(techQueueProvider);
+      ref.invalidate(userTicketsProvider);
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Ticket ${ticket.code} asignado exitosamente'),
-            backgroundColor: AppColors.uvmGreen,
+            backgroundColor: AppColors.primary,
             duration: const Duration(seconds: 3),
           ),
         );

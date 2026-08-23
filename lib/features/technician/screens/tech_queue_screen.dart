@@ -16,7 +16,7 @@ import '../providers/tech_provider.dart';
 /// - Indicador de tiempo en rojo si < 2 horas
 /// - Swipe izquierdo para revelar "Cambiar estatus"
 /// - Estado vacío cuando no hay tickets
-/// - BottomNavigationBar: Mi cola, Disponibles, Base, Perfil
+/// - BottomNavigationBar: Mi cola, Disponibles, Perfil
 /// - Pull-to-refresh
 class TechQueueScreen extends ConsumerWidget {
   const TechQueueScreen({super.key});
@@ -29,7 +29,7 @@ class TechQueueScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(AppStrings.techQueue),
-        backgroundColor: AppColors.uvmGreen,
+        backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         automaticallyImplyLeading: false,
       ),
@@ -86,7 +86,7 @@ class TechQueueScreen extends ConsumerWidget {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: AppColors.uvmGreen,
+        selectedItemColor: AppColors.primary,
         unselectedItemColor: AppColors.textSecondary,
         onTap: (index) => _onNavTap(context, index),
         items: const [
@@ -97,10 +97,6 @@ class TechQueueScreen extends ConsumerWidget {
           BottomNavigationBarItem(
             icon: Icon(Icons.inbox),
             label: AppStrings.navAvailable,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.menu_book),
-            label: AppStrings.navBase,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
@@ -121,9 +117,6 @@ class TechQueueScreen extends ConsumerWidget {
         context.push('/available');
         break;
       case 2:
-        // Base de conocimientos (placeholder)
-        break;
-      case 3:
         context.push('/profile');
         break;
     }
@@ -142,7 +135,7 @@ class _PriorityBadgesHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      color: AppColors.surface,
+      color: AppColors.surfaceCard,
       child: badgeCountAsync.when(
         loading: () => const SizedBox.shrink(),
         error: (_, _) => const SizedBox.shrink(),
@@ -255,7 +248,7 @@ class _SwipeableTicketCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         decoration: BoxDecoration(
-          color: AppColors.uvmGreen,
+          color: AppColors.primary,
           borderRadius: BorderRadius.circular(8),
         ),
         child: const Row(
@@ -356,7 +349,7 @@ class _SwipeableTicketCard extends StatelessWidget {
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
-                                backgroundColor: AppColors.background,
+                                backgroundColor: AppColors.surface,
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 4,
                                   vertical: 0,

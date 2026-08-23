@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/exceptions/app_exceptions.dart';
 import '../../../core/providers/supabase_provider.dart';
+import '../../../models/ticket.dart';
 import '../models/dashboard_kpis.dart';
 
 /// Repositorio que abstrae las queries del panel de indicadores del supervisor.
@@ -220,6 +221,26 @@ class DashboardRepository {
     final parts = fullName.trim().split(RegExp(r'\s+'));
     if (parts.length <= 1) return fullName;
     return '${parts.first} ${parts.last[0]}.';
+  }
+
+  /// Obtiene todos los tickets de la organización, sin filtrar por
+  /// solicitante ni técnico asignado. Solo accesible para el rol supervisor
+  /// (la política RLS "tickets_select" restringe el resto de roles).
+  Future<List<Ticket>> getAllTickets() async {
+    try {
+      final response = await _client
+          .from('tickets')
+          .select()
+          .order('created_at', ascending: false);
+
+      return (response as List<dynamic>)
+          .map((json) => Ticket.fromJson(json as Map<String, dynamic>))
+          .toList();
+    } on PostgrestException catch (e) {
+      throw NotFoundException('Error al obtener tickets: ${e.message}');
+    } catch (e) {
+      throw const NetworkException();
+    }
   }
 }
 

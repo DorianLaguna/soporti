@@ -1,4 +1,3 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_colors.dart';
@@ -34,8 +33,7 @@ class CategoryChart extends StatelessWidget {
 
     final maxValue = entries
         .map((e) => e.value)
-        .reduce((a, b) => a > b ? a : b)
-        .toDouble();
+        .reduce((a, b) => a > b ? a : b);
 
     return Card(
       elevation: 1,
@@ -49,84 +47,47 @@ class CategoryChart extends StatelessWidget {
               AppStrings.categoryDistribution,
               style: Theme.of(context).textTheme.titleMedium,
             ),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: entries.length * 48.0,
-              child: BarChart(
-                BarChartData(
-                  alignment: BarChartAlignment.spaceAround,
-                  maxY: maxValue == 0 ? 1 : maxValue * 1.2,
-                  barTouchData: BarTouchData(enabled: false),
-                  titlesData: FlTitlesData(
-                    show: true,
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 80,
-                        getTitlesWidget: (value, meta) {
-                          final index = value.toInt();
-                          if (index < 0 || index >= entries.length) {
-                            return const SizedBox.shrink();
-                          }
-                          return SideTitleWidget(
-                            axisSide: meta.axisSide,
-                            child: Text(
-                              entries[index].key,
-                              style: Theme.of(context).textTheme.bodySmall,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          );
-                        },
+            const SizedBox(height: 20),
+            ...entries.map(
+              (entry) => Padding(
+                padding: const EdgeInsets.only(bottom: 14),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 72,
+                      child: Text(
+                        entry.key,
+                        style: Theme.of(context).textTheme.bodySmall,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    rightTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 40,
-                        getTitlesWidget: (value, meta) {
-                          final index = value.toInt();
-                          if (index < 0 || index >= entries.length) {
-                            return const SizedBox.shrink();
-                          }
-                          return SideTitleWidget(
-                            axisSide: meta.axisSide,
-                            child: Text(
-                              entries[index].value.toString(),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
-                                  ?.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    topTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    bottomTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                  ),
-                  gridData: const FlGridData(show: false),
-                  borderData: FlBorderData(show: false),
-                  barGroups: entries.asMap().entries.map((entry) {
-                    return BarChartGroupData(
-                      x: entry.key,
-                      barRods: [
-                        BarChartRodData(
-                          toY: entry.value.value.toDouble(),
-                          color: AppColors.uvmGreen,
-                          width: 20,
-                          borderRadius: const BorderRadius.horizontal(
-                            right: Radius.circular(4),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: LinearProgressIndicator(
+                          value: maxValue == 0 ? 0 : entry.value / maxValue,
+                          minHeight: 16,
+                          backgroundColor: AppColors.surface,
+                          valueColor: const AlwaysStoppedAnimation(
+                            AppColors.primary,
                           ),
                         ),
-                      ],
-                    );
-                  }).toList(),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    SizedBox(
+                      width: 24,
+                      child: Text(
+                        entry.value.toString(),
+                        textAlign: TextAlign.end,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                    ),
+                  ],
                 ),
-                duration: const Duration(milliseconds: 300),
               ),
             ),
           ],

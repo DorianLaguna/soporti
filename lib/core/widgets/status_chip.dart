@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
 
 /// Chip coloreado que muestra el estatus de un ticket.
-/// El color de fondo corresponde al estatus (Abierto: azul, Asignado: púrpura,
-/// En proceso: naranja, En espera: café, Resuelto: verde, Cerrado: gris).
-/// El texto es blanco.
+/// El color de fondo corresponde al estatus (Abierto: azul medio, Asignado:
+/// azul profundo, En proceso: naranja, En espera: gris, Resuelto: verde,
+/// Cerrado: gris oscuro). El texto se ajusta (claro/oscuro) según el
+/// contraste con el fondo.
 class StatusChip extends StatelessWidget {
   final String status;
 
@@ -17,8 +18,8 @@ class StatusChip extends StatelessWidget {
     return Chip(
       label: Text(
         status,
-        style: const TextStyle(
-          color: Colors.white,
+        style: TextStyle(
+          color: AppColors.onColor(color),
           fontSize: 12,
           fontWeight: FontWeight.w500,
         ),

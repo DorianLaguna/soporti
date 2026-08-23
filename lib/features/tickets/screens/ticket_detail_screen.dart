@@ -24,6 +24,7 @@ final ticketByIdProvider =
 /// - Título del ticket
 /// - Row con PriorityChip + SLA time restante
 /// - Chip de categoría
+/// - Descripción original del incidente
 /// - Línea de tiempo con eventos ordenados cronológicamente (ascendente)
 /// - Eventos internos NO se muestran (filtrado en el provider)
 class TicketDetailScreen extends ConsumerWidget {
@@ -104,6 +105,26 @@ class TicketDetailScreen extends ConsumerWidget {
                 ),
                 visualDensity: VisualDensity.compact,
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              const SizedBox(height: 24),
+
+              // ─── Descripción ─────────────────────────────────────
+              Text(
+                AppStrings.descriptionLabel,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                ticket.description,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: AppColors.textPrimary,
+                  height: 1.4,
+                ),
               ),
               const SizedBox(height: 24),
 

@@ -44,7 +44,32 @@ class ProfileScreen extends ConsumerWidget {
         ),
         data: (profile) {
           if (profile == null) {
-            return const Center(child: Text(AppStrings.error));
+            // Sesión activa sin fila correspondiente en `profiles` (cuenta
+            // no provisionada o sesión local obsoleta). Se ofrece cerrar
+            // sesión para no dejar al usuario sin salida.
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline,
+                      size: 48, color: AppColors.error),
+                  const SizedBox(height: 16),
+                  const Text(AppStrings.error),
+                  const SizedBox(height: 24),
+                  OutlinedButton.icon(
+                    onPressed: () => _signOut(context, ref),
+                    icon: const Icon(Icons.logout, color: AppColors.error),
+                    label: const Text(
+                      AppStrings.logout,
+                      style: TextStyle(color: AppColors.error),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: AppColors.error),
+                    ),
+                  ),
+                ],
+              ),
+            );
           }
 
           return SingleChildScrollView(
@@ -55,7 +80,7 @@ class ProfileScreen extends ConsumerWidget {
                 // Avatar con iniciales
                 CircleAvatar(
                   radius: 48,
-                  backgroundColor: AppColors.uvmGreen,
+                  backgroundColor: AppColors.primary,
                   child: Text(
                     _getInitials(profile.fullName),
                     style: const TextStyle(
@@ -176,7 +201,7 @@ class _ProfileInfoCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
           children: [
-            Icon(icon, color: AppColors.uvmGreen, size: 24),
+            Icon(icon, color: AppColors.primary, size: 24),
             const SizedBox(width: 16),
             Expanded(
               child: Column(

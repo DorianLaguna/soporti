@@ -22,7 +22,7 @@ No hay registro público en la app — las cuentas se provisionan manualmente, t
 
 1. Ve a **Authentication → Users → Add user** y crea el usuario con correo y contraseña (marca "Auto Confirm User" para no depender de un correo de verificación).
 2. Copia el `UID` que te asigna Supabase.
-3. Ve a **Table Editor → profiles → Insert row** y crea la fila correspondiente:
+3. Crea su fila en `profiles`. Puedes usar **Table Editor → profiles → Insert row**, o pegar los `UID` reales en [`seed_profiles.sql`](./seed_profiles.sql) y ejecutarlo en el SQL Editor — más rápido para los 3 a la vez. **Este paso es obligatorio**: sin la fila en `profiles`, el login de Supabase funciona pero la app no encuentra tu perfil y falla en todas las pantallas.
 
 | id (pega el UID) | email | full_name | role | location |
 |---|---|---|---|---|

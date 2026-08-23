@@ -1,5 +1,4 @@
 import 'package:glados/glados.dart';
-import 'package:test/test.dart';
 import 'package:soporti/core/utils/validators.dart';
 import 'package:soporti/core/constants/app_strings.dart';
 
@@ -79,7 +78,7 @@ void main() {
 
     group('validateEmail acepta emails con formato válido', () {
       /// Genera un email válido a partir de un seed.
-      String _generateValidEmail(int seed) {
+      String generateValidEmail(int seed) {
         final names = [
           'user',
           'admin',
@@ -103,7 +102,7 @@ void main() {
       Glados(any.intInRange(0, 1000), ExploreConfig(numRuns: 100)).test(
         'emails con formato válido son aceptados',
         (seed) {
-          final email = _generateValidEmail(seed);
+          final email = generateValidEmail(seed);
           final result = validateEmail(email);
           expect(result, isNull,
               reason: 'validateEmail debería aceptar email válido: "$email"');

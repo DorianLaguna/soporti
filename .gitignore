@@ -46,3 +46,6 @@ app.*.map.json
 
 # Credenciales locales de Supabase (ver env/dev.json.example)
 env/dev.json
+
+# Capturas de pantalla locales para el entregable (no forman parte del código)
+/capturas/

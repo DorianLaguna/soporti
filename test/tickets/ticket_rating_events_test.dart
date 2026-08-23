@@ -1,5 +1,4 @@
 import 'package:glados/glados.dart';
-import 'package:test/test.dart';
 
 import 'package:soporti/models/ticket.dart';
 import 'package:soporti/models/ticket_event.dart';

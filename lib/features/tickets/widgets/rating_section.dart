@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../providers/ticket_events_provider.dart';
+import '../providers/ticket_provider.dart';
 import '../repositories/ticket_repository.dart';
 import '../screens/ticket_detail_screen.dart';
 
@@ -51,6 +52,7 @@ class _RatingSectionState extends ConsumerState<RatingSection> {
       // Refrescar los providers para que la UI se actualice
       ref.invalidate(ticketByIdProvider(widget.ticketId));
       ref.invalidate(ticketEventsProvider(widget.ticketId));
+      ref.invalidate(userTicketsProvider);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -116,7 +118,7 @@ class _RatingSectionState extends ConsumerState<RatingSection> {
           child: ElevatedButton(
             onPressed: _isSubmitting ? null : _submitRating,
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.uvmGreen,
+              backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(
@@ -167,9 +169,9 @@ class _RatingButton extends StatelessWidget {
         width: 48,
         height: 48,
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.uvmGreen : Colors.transparent,
+          color: isSelected ? AppColors.primary : Colors.transparent,
           border: Border.all(
-            color: isSelected ? AppColors.uvmGreen : AppColors.divider,
+            color: isSelected ? AppColors.primary : AppColors.divider,
             width: 2,
           ),
           borderRadius: BorderRadius.circular(12),

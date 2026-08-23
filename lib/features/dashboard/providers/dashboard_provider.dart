@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../models/ticket.dart';
 import '../models/dashboard_kpis.dart';
 import '../repositories/dashboard_repository.dart';
 
@@ -33,4 +34,11 @@ final categoryDistributionProvider =
 final techWorkloadProvider = FutureProvider<Map<String, int>>((ref) async {
   final repository = ref.watch(dashboardRepositoryProvider);
   return repository.getTechWorkload();
+});
+
+/// FutureProvider que obtiene todos los tickets de la organización
+/// (vista "Todos los tickets" del supervisor).
+final allTicketsProvider = FutureProvider<List<Ticket>>((ref) async {
+  final repository = ref.watch(dashboardRepositoryProvider);
+  return repository.getAllTickets();
 });

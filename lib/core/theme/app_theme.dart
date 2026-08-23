@@ -3,26 +3,29 @@ import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
 
 /// Tema principal de la aplicación SoporTI.
-/// Utiliza los colores institucionales de UVM (verde/dorado).
+/// Utiliza la paleta oficial (azules) y tipografía Roboto.
 class AppTheme {
   AppTheme._();
 
   static ThemeData get light {
     return ThemeData(
       useMaterial3: true,
+      fontFamily: 'Roboto',
       colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.uvmGreen,
-        primary: AppColors.uvmGreen,
+        seedColor: AppColors.primary,
+        primary: AppColors.primary,
         onPrimary: Colors.white,
-        secondary: AppColors.uvmGold,
+        primaryContainer: AppColors.primaryContainer,
+        onPrimaryContainer: AppColors.primary,
+        secondary: AppColors.secondary,
         onSecondary: Colors.white,
         error: AppColors.error,
-        surface: AppColors.surface,
+        surface: AppColors.surfaceCard,
         onSurface: AppColors.textPrimary,
       ),
-      scaffoldBackgroundColor: AppColors.background,
+      scaffoldBackgroundColor: AppColors.surface,
       appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.uvmGreen,
+        backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
@@ -32,7 +35,7 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
-        color: AppColors.surface,
+        color: AppColors.surfaceCard,
       ),
       chipTheme: ChipThemeData(
         shape: RoundedRectangleBorder(
@@ -42,7 +45,7 @@ class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.surface,
+        fillColor: AppColors.surfaceCard,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.divider),
@@ -53,7 +56,7 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.uvmGreen, width: 2),
+          borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -64,7 +67,7 @@ class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.uvmGreen,
+          backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
           minimumSize: const Size(double.infinity, 48),
           shape: RoundedRectangleBorder(
@@ -76,15 +79,35 @@ class AppTheme {
           ),
         ),
       ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: AppColors.primary,
+          minimumSize: const Size(64, 48),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: AppColors.primary,
+          minimumSize: const Size(48, 48),
+        ),
+      ),
+      iconButtonTheme: IconButtonThemeData(
+        style: IconButton.styleFrom(
+          minimumSize: const Size(48, 48),
+        ),
+      ),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: AppColors.uvmGreen,
+        backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        selectedItemColor: AppColors.uvmGreen,
+        selectedItemColor: AppColors.primary,
         unselectedItemColor: AppColors.textSecondary,
         type: BottomNavigationBarType.fixed,
-        backgroundColor: AppColors.surface,
+        backgroundColor: AppColors.surfaceCard,
         elevation: 8,
       ),
       snackBarTheme: SnackBarThemeData(

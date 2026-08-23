@@ -9,6 +9,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/utils/validators.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../providers/ticket_provider.dart';
 import '../repositories/ticket_repository.dart';
 
 /// Modelo simple para artículos de autoayuda.
@@ -282,7 +283,7 @@ class _TicketCreateScreenState extends ConsumerState<TicketCreateScreen> {
     try {
       final user = await ref.read(currentUserProvider.future);
       if (user == null) {
-        _showSnackBar(AppStrings.error);
+        _showSnackBar(AppStrings.profileNotFound);
         setState(() => _isLoading = false);
         return;
       }
@@ -303,12 +304,17 @@ class _TicketCreateScreenState extends ConsumerState<TicketCreateScreen> {
       // TODO: Upload images via storage repository (task 6.2).
       // When implemented, iterate _attachedImages and upload each one.
 
+      // Refrescar "Mis tickets" para que el nuevo ticket aparezca sin
+      // necesidad de pull-to-refresh manual.
+      ref.invalidate(userTicketsProvider);
+
       if (mounted) {
         context.go('/tickets/${ticket.id}');
       }
     } catch (e) {
+      debugPrint('Error al crear ticket: $e');
       if (mounted) {
-        _showSnackBar(AppStrings.error);
+        _showSnackBar('${AppStrings.error}: $e');
       }
     } finally {
       if (mounted) {
@@ -441,7 +447,7 @@ class _TicketCreateScreenState extends ConsumerState<TicketCreateScreen> {
               child: ElevatedButton(
                 onPressed: _isLoading ? null : _submitTicket,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.uvmGreen,
+                  backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -494,9 +500,9 @@ class _CategoryChips extends StatelessWidget {
           label: Text(category),
           selected: isSelected,
           onSelected: (_) => onSelected(category),
-          selectedColor: AppColors.uvmGreen.withValues(alpha: 0.15),
+          selectedColor: AppColors.primary.withValues(alpha: 0.15),
           labelStyle: TextStyle(
-            color: isSelected ? AppColors.uvmGreen : AppColors.textPrimary,
+            color: isSelected ? AppColors.primary : AppColors.textPrimary,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
           ),
         );
@@ -527,7 +533,7 @@ class _SelfHelpSection extends StatelessWidget {
           AppStrings.selfHelpTitle,
           style: Theme.of(context).textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: AppColors.uvmGreen,
+                color: AppColors.primary,
               ),
         ),
         const SizedBox(height: 8),
@@ -541,7 +547,7 @@ class _SelfHelpSection extends StatelessWidget {
               child: ListTile(
                 leading: Icon(
                   Icons.article_outlined,
-                  color: AppColors.uvmGreen,
+                  color: AppColors.primary,
                 ),
                 title: Text(
                   article.title,

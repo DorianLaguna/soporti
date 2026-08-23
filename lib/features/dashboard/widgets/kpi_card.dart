@@ -22,7 +22,7 @@ class KpiCard extends StatelessWidget {
     required this.title,
     required this.value,
     required this.icon,
-    this.accentColor = AppColors.uvmGreen,
+    this.accentColor = AppColors.primary,
   });
 
   @override

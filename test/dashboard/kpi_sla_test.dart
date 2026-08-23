@@ -1,6 +1,5 @@
 // Feature: soporti-app, Property 13: KPI — SLA compliance percentage
 import 'package:glados/glados.dart';
-import 'package:test/test.dart';
 
 /// Datos de un ticket resuelto para cálculo de SLA compliance.
 class ResolvedTicketData {

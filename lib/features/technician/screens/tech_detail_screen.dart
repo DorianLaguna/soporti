@@ -8,6 +8,9 @@ import '../../../core/widgets/timeline_event.dart';
 import '../../../models/ticket.dart';
 import '../../../models/ticket_event.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../tickets/providers/ticket_events_provider.dart';
+import '../../tickets/providers/ticket_provider.dart';
+import '../../tickets/screens/ticket_detail_screen.dart' show ticketByIdProvider;
 import '../providers/tech_provider.dart';
 import '../repositories/tech_repository.dart';
 import '../widgets/reassign_modal.dart';
@@ -59,7 +62,7 @@ class _TechDetailScreenState extends ConsumerState<TechDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(AppStrings.ticketDetail),
-        backgroundColor: AppColors.uvmGreen,
+        backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
       ),
       body: ticketAsync.when(
@@ -110,24 +113,35 @@ class _TechDetailScreenState extends ConsumerState<TechDetailScreen> {
                   _buildInfoRow(ticket),
                   const SizedBox(height: 20),
 
+                  // 3.5 Description
+                  _buildDescription(ticket),
+                  const SizedBox(height: 20),
+
                   // 4. Timeline summary (last 3 events)
                   _buildTimelineSummary(eventsAsync),
                   const SizedBox(height: 20),
 
-                  // 5. Status selection chips
-                  _buildStatusSelection(ticket),
-                  const SizedBox(height: 20),
+                  // El ticket ya fue calificado y cerrado por el
+                  // solicitante: no tiene sentido seguir ofreciendo
+                  // controles para gestionarlo.
+                  if (ticket.status == 'Cerrado')
+                    _buildClosedNotice()
+                  else ...[
+                    // 5. Status selection chips
+                    _buildStatusSelection(ticket),
+                    const SizedBox(height: 20),
 
-                  // 6. "Solución aplicada" field
-                  _buildSolutionField(),
-                  const SizedBox(height: 16),
+                    // 6. "Solución aplicada" field
+                    _buildSolutionField(),
+                    const SizedBox(height: 16),
 
-                  // 7. Internal comment checkbox + field
-                  _buildInternalComment(),
-                  const SizedBox(height: 24),
+                    // 7. Internal comment checkbox + field
+                    _buildInternalComment(),
+                    const SizedBox(height: 24),
 
-                  // 8. Action buttons
-                  _buildActionButtons(ticket),
+                    // 8. Action buttons
+                    _buildActionButtons(ticket),
+                  ],
                 ],
               ),
             ),
@@ -150,16 +164,48 @@ class _TechDetailScreenState extends ConsumerState<TechDetailScreen> {
             color: AppColors.textPrimary,
           ),
         ),
-        OutlinedButton.icon(
-          onPressed: () => _handleReassign(ticket),
-          icon: const Icon(Icons.swap_horiz, size: 18),
-          label: const Text(AppStrings.reassign),
-          style: OutlinedButton.styleFrom(
-            foregroundColor: AppColors.uvmGreen,
-            side: const BorderSide(color: AppColors.uvmGreen),
+        // Un ticket cerrado ya no se puede reasignar.
+        if (ticket.status != 'Cerrado')
+          OutlinedButton.icon(
+            onPressed: () => _handleReassign(ticket),
+            icon: const Icon(Icons.swap_horiz, size: 18),
+            label: const Text(AppStrings.reassign),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppColors.primary,
+              side: const BorderSide(color: AppColors.primary),
+            ),
           ),
-        ),
       ],
+    );
+  }
+
+  /// Aviso de solo lectura para tickets ya cerrados por el solicitante.
+  Widget _buildClosedNotice() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.statusCerrado.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.statusCerrado.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.lock_outline, color: AppColors.statusCerrado, size: 20),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              'Este ticket ya fue calificado y cerrado por el solicitante. '
+              'No se puede modificar.',
+              style: TextStyle(
+                color: AppColors.statusCerrado,
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -213,6 +259,32 @@ class _TechDetailScreenState extends ConsumerState<TechDetailScreen> {
             visualDensity: VisualDensity.compact,
             side: BorderSide(color: AppColors.divider),
           ),
+      ],
+    );
+  }
+
+  /// Descripción original del incidente, escrita por el solicitante.
+  Widget _buildDescription(Ticket ticket) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          AppStrings.descriptionLabel,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          ticket.description,
+          style: const TextStyle(
+            fontSize: 14,
+            color: AppColors.textPrimary,
+            height: 1.4,
+          ),
+        ),
       ],
     );
   }
@@ -375,7 +447,7 @@ class _TechDetailScreenState extends ConsumerState<TechDetailScreen> {
                   _internalCommentEnabled = value ?? false;
                 });
               },
-              activeColor: AppColors.uvmGreen,
+              activeColor: AppColors.primary,
             ),
             Expanded(
               child: GestureDetector(
@@ -430,8 +502,8 @@ class _TechDetailScreenState extends ConsumerState<TechDetailScreen> {
           child: OutlinedButton(
             onPressed: _isSaving ? null : () => _handleSave(ticket),
             style: OutlinedButton.styleFrom(
-              foregroundColor: AppColors.uvmGreen,
-              side: const BorderSide(color: AppColors.uvmGreen),
+              foregroundColor: AppColors.primary,
+              side: const BorderSide(color: AppColors.primary),
               padding: const EdgeInsets.symmetric(vertical: 14),
             ),
             child: _isSaving
@@ -452,7 +524,7 @@ class _TechDetailScreenState extends ConsumerState<TechDetailScreen> {
           child: FilledButton(
             onPressed: _isSaving ? null : () => _handleMarkResolved(ticket),
             style: FilledButton.styleFrom(
-              backgroundColor: AppColors.uvmGreen,
+              backgroundColor: AppColors.primary,
               padding: const EdgeInsets.symmetric(vertical: 14),
             ),
             child: const Text(
@@ -542,12 +614,19 @@ class _TechDetailScreenState extends ConsumerState<TechDetailScreen> {
       ref.invalidate(techTicketByIdProvider(widget.ticketId));
       ref.invalidate(techTicketEventsProvider(widget.ticketId));
       ref.invalidate(techQueueProvider);
+      // La vista del solicitante (otra sesión, u otro rol en el mismo
+      // dispositivo) tiene sus propios providers cacheados por separado;
+      // sin esto, un cambio de estatus del técnico no se reflejaba ahí
+      // hasta reiniciar la app.
+      ref.invalidate(ticketByIdProvider(widget.ticketId));
+      ref.invalidate(ticketEventsProvider(widget.ticketId));
+      ref.invalidate(userTicketsProvider);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Cambios guardados exitosamente'),
-            backgroundColor: AppColors.uvmGreen,
+            backgroundColor: AppColors.primary,
           ),
         );
         Navigator.of(context).pop();
@@ -622,12 +701,19 @@ class _TechDetailScreenState extends ConsumerState<TechDetailScreen> {
       ref.invalidate(techTicketByIdProvider(widget.ticketId));
       ref.invalidate(techTicketEventsProvider(widget.ticketId));
       ref.invalidate(techQueueProvider);
+      // La vista del solicitante (otra sesión, u otro rol en el mismo
+      // dispositivo) tiene sus propios providers cacheados por separado;
+      // sin esto, un cambio de estatus del técnico no se reflejaba ahí
+      // hasta reiniciar la app.
+      ref.invalidate(ticketByIdProvider(widget.ticketId));
+      ref.invalidate(ticketEventsProvider(widget.ticketId));
+      ref.invalidate(userTicketsProvider);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Ticket marcado como resuelto'),
-            backgroundColor: AppColors.uvmGreen,
+            backgroundColor: AppColors.primary,
           ),
         );
         Navigator.of(context).pop();
@@ -668,12 +754,19 @@ class _TechDetailScreenState extends ConsumerState<TechDetailScreen> {
       ref.invalidate(techTicketByIdProvider(widget.ticketId));
       ref.invalidate(techTicketEventsProvider(widget.ticketId));
       ref.invalidate(techQueueProvider);
+      // La vista del solicitante (otra sesión, u otro rol en el mismo
+      // dispositivo) tiene sus propios providers cacheados por separado;
+      // sin esto, un cambio de estatus del técnico no se reflejaba ahí
+      // hasta reiniciar la app.
+      ref.invalidate(ticketByIdProvider(widget.ticketId));
+      ref.invalidate(ticketEventsProvider(widget.ticketId));
+      ref.invalidate(userTicketsProvider);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Ticket reasignado a ${selectedTech.fullName}'),
-            backgroundColor: AppColors.uvmGreen,
+            backgroundColor: AppColors.primary,
           ),
         );
         Navigator.of(context).pop();

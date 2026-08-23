@@ -22,7 +22,7 @@ class DashboardScreen extends ConsumerStatefulWidget {
 }
 
 class _DashboardScreenState extends ConsumerState<DashboardScreen> {
-  int _currentNavIndex = 0;
+  final int _currentNavIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -103,6 +103,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentNavIndex,
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: AppColors.primary,
+        unselectedItemColor: AppColors.textSecondary,
         onTap: _onNavTap,
         items: const [
           BottomNavigationBarItem(
@@ -161,7 +164,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       crossAxisCount: 2,
       crossAxisSpacing: 12,
       mainAxisSpacing: 12,
-      childAspectRatio: 1.3,
+      // 1.3 no dejaba espacio suficiente cuando el título ocupa 2 líneas
+      // (p. ej. "Tiempo prom. resolución"), causando overflow vertical.
+      childAspectRatio: 1.05,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       children: [
@@ -175,7 +180,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           title: AppStrings.kpiAvgResolution,
           value: KpiCard.formatAvgResolution(kpis.avgResolutionHours),
           icon: Icons.schedule,
-          accentColor: AppColors.uvmGold,
+          accentColor: AppColors.secondary,
         ),
         KpiCard(
           title: AppStrings.kpiSlaCompliance,
@@ -190,7 +195,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           title: AppStrings.kpiSatisfaction,
           value: KpiCard.formatSatisfaction(kpis.avgSatisfaction),
           icon: Icons.star_outline,
-          accentColor: AppColors.uvmGold,
+          accentColor: AppColors.secondary,
         ),
       ],
     );
@@ -221,19 +226,18 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   /// Navega a la pantalla correspondiente según la pestaña seleccionada.
   void _onNavTap(int index) {
     if (index == _currentNavIndex) return;
-    setState(() => _currentNavIndex = index);
     switch (index) {
       case 0:
         // Ya estamos en Indicadores.
         break;
       case 1:
-        context.go('/tickets');
+        context.push('/supervisor-tickets');
         break;
       case 2:
         // Equipo — por implementar en otra tarea.
         break;
       case 3:
-        context.go('/profile');
+        context.push('/profile');
         break;
     }
   }

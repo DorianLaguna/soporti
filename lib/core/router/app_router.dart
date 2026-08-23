@@ -6,8 +6,10 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/providers/auth_provider.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/dashboard/screens/dashboard_screen.dart';
+import '../../features/dashboard/screens/supervisor_tickets_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
 import '../../features/technician/screens/available_tickets_screen.dart';
+import '../../features/technician/screens/tech_detail_screen.dart';
 import '../../features/technician/screens/tech_queue_screen.dart';
 import '../../features/tickets/screens/ticket_create_screen.dart';
 import '../../features/tickets/screens/ticket_detail_screen.dart';
@@ -25,7 +27,12 @@ final routerProvider = Provider<GoRouter>((ref) {
     refreshListenable:
         GoRouterRefreshStream(client.auth.onAuthStateChange),
     redirect: (context, state) {
-      final isLoggedIn = authState.value?.session != null;
+      // Nota: se usa `valueOrNull` (no `value`) porque Riverpod relanza la
+      // excepción de un AsyncValue en estado de error al leer `.value`. Sin
+      // esto, cualquier error transitorio al consultar el perfil (RLS, red,
+      // sesión local sin fila en `profiles`) tumbaría el router entero antes
+      // de poder redirigir a /login.
+      final isLoggedIn = authState.valueOrNull?.session != null;
       final isLoginRoute = state.matchedLocation == '/login';
 
       // Si no está autenticado y no está en login, redirigir a login.
@@ -33,7 +40,7 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       // Si está autenticado y está en login, redirigir según rol.
       if (isLoggedIn && isLoginRoute) {
-        final role = currentUser.value?.role;
+        final role = currentUser.valueOrNull?.role;
         switch (role) {
           case 'solicitante':
             return '/tickets';
@@ -77,7 +84,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/queue/:id',
         builder: (context, state) {
           final ticketId = state.pathParameters['id']!;
-          return _PlaceholderScreen(title: 'Gestión: $ticketId');
+          return TechDetailScreen(ticketId: ticketId);
         },
       ),
       GoRoute(
@@ -89,32 +96,16 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const DashboardScreen(),
       ),
       GoRoute(
+        path: '/supervisor-tickets',
+        builder: (context, state) => const SupervisorTicketsScreen(),
+      ),
+      GoRoute(
         path: '/profile',
         builder: (context, state) => const ProfileScreen(),
       ),
     ],
   );
 });
-
-/// Pantalla placeholder para rutas que se implementarán en tareas posteriores.
-class _PlaceholderScreen extends StatelessWidget {
-  final String title;
-
-  const _PlaceholderScreen({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(title)),
-      body: Center(
-        child: Text(
-          title,
-          style: Theme.of(context).textTheme.headlineMedium,
-        ),
-      ),
-    );
-  }
-}
 
 /// Convierte un [Stream] en un [ChangeNotifier] para que GoRouter
 /// pueda re-evaluar las redirecciones cuando cambia el estado de autenticación.

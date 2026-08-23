@@ -3,7 +3,8 @@ import '../constants/app_colors.dart';
 
 /// Chip coloreado que muestra la prioridad de un ticket.
 /// El color de fondo corresponde a la prioridad (Crítica: rojo, Alta: naranja,
-/// Media: amarillo, Baja: verde). El texto es blanco.
+/// Media: ámbar, Baja: verde). El texto se ajusta (claro/oscuro) según el
+/// contraste con el fondo.
 class PriorityChip extends StatelessWidget {
   final String priority;
 
@@ -16,8 +17,8 @@ class PriorityChip extends StatelessWidget {
     return Chip(
       label: Text(
         priority,
-        style: const TextStyle(
-          color: Colors.white,
+        style: TextStyle(
+          color: AppColors.onColor(color),
           fontSize: 12,
           fontWeight: FontWeight.w500,
         ),

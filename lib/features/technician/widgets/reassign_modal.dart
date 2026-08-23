@@ -154,11 +154,11 @@ class _TechnicianTile extends StatelessWidget {
     return ListTile(
       onTap: onTap,
       leading: CircleAvatar(
-        backgroundColor: AppColors.uvmGreen.withValues(alpha: 0.1),
+        backgroundColor: AppColors.primary.withValues(alpha: 0.1),
         child: Text(
           _initials(technician.fullName),
           style: const TextStyle(
-            color: AppColors.uvmGreen,
+            color: AppColors.primary,
             fontWeight: FontWeight.w600,
             fontSize: 14,
           ),

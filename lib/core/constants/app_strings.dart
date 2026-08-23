@@ -31,6 +31,8 @@ class AppStrings {
       'Se envió un correo de restablecimiento';
   static const String resetPasswordError =
       'No se pudo enviar el correo de restablecimiento';
+  static const String profileNotFound =
+      'No se pudo cargar tu perfil. Cierra sesión y vuelve a entrar.';
 
   // ─── Tickets - Lista ─────────────────────────────────────────────────
   static const String greeting = 'Hola, ';
